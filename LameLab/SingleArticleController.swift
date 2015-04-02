@@ -30,6 +30,7 @@ class SingleArticleController: UIViewController {
         
         navigationController?.hidesBarsOnSwipe = true
         
+        /*
         navigationController!.setNavigationBarHidden(false, animated:true)
         var myBackButton:UIButton = UIButton.buttonWithType(UIButtonType.Custom) as UIButton
         myBackButton.addTarget(self, action: "popToRoot:", forControlEvents: UIControlEvents.TouchUpInside)
@@ -38,8 +39,9 @@ class SingleArticleController: UIViewController {
         myBackButton.sizeToFit()
         var myCustomBackButtonItem:UIBarButtonItem = UIBarButtonItem(customView: myBackButton)
         self.navigationItem.leftBarButtonItem  = myCustomBackButtonItem
+        */
         
-        navigationItem.title = "The title"
+        //navigationItem.title = "The title"
         
         // Do any additional setup after loading the view.
     }
