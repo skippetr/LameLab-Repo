@@ -15,13 +15,38 @@ class AllNewsViewController: UITableViewController, UITableViewDelegate, UITable
     
     @IBOutlet weak var menuButton: UIBarButtonItem!
     var newsList = [String]()
+    var idList = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController!.hidesBarsOnSwipe = true
+//        tableView.estimatedRowHeight = tableView.rowHeight
+//        tableView.rowHeight = UITableViewAutomaticDimension
         
-        loadData()
+        let activity = UIActivityIndicatorView()
+        activity.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+        activity.backgroundColor = UIColor.blackColor()
+        activity.alpha = 0.7
+        activity.layer.cornerRadius = 10
+        activity.frame = CGRectMake(0, 0, 100, 100)
+        activity.center = CGPointMake(self.view.bounds.midX, self.view.bounds.midY-50)
+        activity.layer.zPosition = 2
+        self.tableView.addSubview(activity)
+        //tableView.tableFooterView = activity
+        //activity.startAnimating()
+        
+//        var downloadQueue = dispatch_queue_create("downloader", nil)
+//        dispatch_async(downloadQueue, {
+//            self.loadData()
+//            dispatch_async(dispatch_get_main_queue(), {
+//                activity.removeFromSuperview()
+//                //self.tableView.tableFooterView = nil
+//            })
+//        })
+        
+        //navigationController!.hidesBarsOnSwipe = true
+        
+        //loadData()
                 
         if self.revealViewController() != nil {
             menuButton.target = self.revealViewController()
@@ -39,23 +64,25 @@ class AllNewsViewController: UITableViewController, UITableViewDelegate, UITable
             for i in 0..<array.count {
                 if let element = array[i] as? NSDictionary {
                     self.newsList.append(element.valueForKey("title") as String)
+                    self.idList.append(element.valueForKey("id") as String)
                 }
             }
         }
         
         tableView.reloadData()
-        
-        /*
-        let oneNews = JSON?.valueForKey("10") as NSDictionary
-        let titleOfNews = oneNews.valueForKey("title") as String
-        println(titleOfNews)
-        println(JSON)
-        */
+//        tableView.setNeedsLayout()
+//        tableView.layoutIfNeeded()
+//        tableView.estimatedRowHeight = 200 //tableView.rowHeight
+//        tableView.rowHeight = UITableViewAutomaticDimension
+//        tableView.reloadData()
+    
     }
     
     func loadData() {
         Alamofire.request(.GET, "http://www.lamelab.com/api.php", parameters: ["foo": "bar"])
             .responseJSON { (_, _, JSON, error) in
+//                println(JSON)
+//                println(error)
                 self.jsonParse(JSON)
         }
         
@@ -71,12 +98,17 @@ class AllNewsViewController: UITableViewController, UITableViewDelegate, UITable
     //MARK: - TableView
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return newsList.count
+        return 10 //newsList.count
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as UITableViewCell
-        cell.textLabel?.text = newsList[indexPath.row]
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as AllNewsTableViewCell
+        cell.newsTitle.text = newsList[indexPath.row]
+        //cell.newsImage.image = UIImage(named: "placeholder")
+        
+//        cell.setNeedsUpdateConstraints()
+//        cell.updateConstraintsIfNeeded()
+        
         return cell
     }
     
@@ -91,7 +123,8 @@ class AllNewsViewController: UITableViewController, UITableViewDelegate, UITable
             if article == "toTheArticle" {
                 if let vc = segue.destinationViewController as? SingleArticleController {
                     vc.title = "Статья"
-                    vc.id = self.tableView.indexPathForSelectedRow()?.row
+                    //println(newsList[self.tableView.indexPathForSelectedRow()!.row])
+                    vc.id = idList[self.tableView.indexPathForSelectedRow()!.row].toInt()!
                 }
             }
         }
